@@ -1,0 +1,3 @@
+node_modules/
+*.log
+pacakge-lock.json
