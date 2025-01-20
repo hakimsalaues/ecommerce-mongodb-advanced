@@ -89,7 +89,7 @@ let products = [
     },
 ];
 
-let productId = 9; // Para continuar con el ID siguiente.
+let productId = 9; 
 
 const getAllProducts = (req, res) => {
     const limit = parseInt(req.query.limit);

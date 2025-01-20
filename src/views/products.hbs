@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products</title>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <h1>Lista de Productos en Tiempo Real</h1>
+  <ul id="productList">
+    
+  </ul>
+
+  <h2>Agregar Producto</h2>
+  <form id="addProductForm">
+    <input type="text" id="productTitle" placeholder="Título del producto" required>
+    <input type="number" id="productPrice" placeholder="Precio" required>
+    <button type="submit">Agregar</button>
+  </form>
+
+  <script>
+    const socket = io();
+
+    // DOM
+    const productList = document.getElementById('productList');
+    const addProductForm = document.getElementById('addProductForm');
+    const productTitle = document.getElementById('productTitle');
+    const productPrice = document.getElementById('productPrice');
+
+    // lista de productos
+    socket.on('updateProducts', (products) => {
+      productList.innerHTML = '';
+      products.forEach((product) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          ${product.title} - $${product.price.toFixed(2)}
+          <button class="delete-btn" data-id="${product.id}">Eliminar</button>
+        `;
+        productList.appendChild(li);
+      });
+
+      // botones de eliminar
+      document.querySelectorAll('.delete-btn').forEach((button) => {
+        button.addEventListener('click', () => {
+          const productId = button.getAttribute('data-id');
+          socket.emit('deleteProduct', parseInt(productId));
+        });
+      });
+    });
+
+    // Agregar producto
+    addProductForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newProduct = {
+        id: Date.now(), // Generar un ID único
+        title: productTitle.value,
+        price: parseFloat(productPrice.value),
+      };
+      socket.emit('addProduct', newProduct);
+      addProductForm.reset();
+    });
+  </script>
+</body>
+</html>
