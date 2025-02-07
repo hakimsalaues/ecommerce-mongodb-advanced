@@ -3,63 +3,85 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Products</title>
+  <title>{{title}}</title>
   <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
-  <h1>Lista de Productos en Tiempo Real</h1>
+  <h1>Lista de Productos</h1>
   <ul id="productList">
-    
+    {{#each products}}
+      <li>
+        <h3>{{this.title}}</h3>
+        <p>{{this.description}}</p>
+        <p>Precio: ${{this.price}}</p>
+        <p>Categoría: {{this.category}}</p>
+        <button onclick="addToCart('{{this._id}}')">Agregar al carrito</button>
+        <button onclick="deleteProduct('{{this._id}}')">Eliminar</button>
+      </li>
+    {{/each}}
   </ul>
 
   <h2>Agregar Producto</h2>
   <form id="addProductForm">
     <input type="text" id="productTitle" placeholder="Título del producto" required>
     <input type="number" id="productPrice" placeholder="Precio" required>
+    <input type="text" id="productCategory" placeholder="Categoría" required>
+    <textarea id="productDescription" placeholder="Descripción" required></textarea>
     <button type="submit">Agregar</button>
   </form>
 
   <script>
     const socket = io();
-
-    // DOM
     const productList = document.getElementById('productList');
     const addProductForm = document.getElementById('addProductForm');
-    const productTitle = document.getElementById('productTitle');
-    const productPrice = document.getElementById('productPrice');
 
-    // lista de productos
+    // Actualizar la lista de productos en tiempo real
     socket.on('updateProducts', (products) => {
       productList.innerHTML = '';
-      products.forEach((product) => {
+      products.forEach(product => {
         const li = document.createElement('li');
         li.innerHTML = `
-          ${product.title} - $${product.price.toFixed(2)}
-          <button class="delete-btn" data-id="${product.id}">Eliminar</button>
+          <h3>${product.title}</h3>
+          <p>${product.description}</p>
+          <p>Precio: $${product.price.toFixed(2)}</p>
+          <p>Categoría: ${product.category}</p>
+          <button onclick="addToCart('${product._id}')">Agregar al carrito</button>
+          <button onclick="deleteProduct('${product._id}')">Eliminar</button>
         `;
         productList.appendChild(li);
       });
-
-      // botones de eliminar
-      document.querySelectorAll('.delete-btn').forEach((button) => {
-        button.addEventListener('click', () => {
-          const productId = button.getAttribute('data-id');
-          socket.emit('deleteProduct', parseInt(productId));
-        });
-      });
     });
 
-    // Agregar producto
+    // Enviar nuevo producto
     addProductForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const newProduct = {
-        id: Date.now(), // Generar un ID único
-        title: productTitle.value,
-        price: parseFloat(productPrice.value),
+        title: document.getElementById('productTitle').value,
+        price: parseFloat(document.getElementById('productPrice').value),
+        category: document.getElementById('productCategory').value,
+        description: document.getElementById('productDescription').value
       };
       socket.emit('addProduct', newProduct);
       addProductForm.reset();
     });
+
+    // Función para eliminar un producto vía WebSocket
+    function deleteProduct(productId) {
+      socket.emit('deleteProduct', productId);
+    }
+
+    // Función para agregar al carrito vía HTTP (ejemplo)
+    function addToCart(productId) {
+      // Reemplaza 'ID_DEL_CARRITO' con la lógica real para gestionar carritos
+      fetch(`/api/carts/ID_DEL_CARRITO/products/${productId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ quantity: 1 })
+      })
+      .then(res => res.json())
+      .then(data => console.log('Producto agregado al carrito:', data))
+      .catch(err => console.error('Error al agregar producto al carrito:', err));
+    }
   </script>
 </body>
 </html>

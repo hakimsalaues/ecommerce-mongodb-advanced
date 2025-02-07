@@ -1,92 +1,125 @@
 const express = require('express');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
-const { create } = require('express-handlebars'); 
-const axios = require('axios');
+const { create } = require('express-handlebars');
 const path = require('path');
+const mongoose = require('mongoose');
+const fs = require('fs');
+
+const productsRouter = require('./routes/products.routes');
+const cartsRouter = require('./routes/carts.routes');
+const Product = require('./models/product');
 
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer);
+const PORT = 3000;
 
-// Handlebars
+// Conexión directa a MongoDB Atlas
+const mongoURI = /* ingresar el url que envie por privado  */
+
+mongoose
+  .connect(mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(async () => {
+    console.log('Conectado a MongoDB Atlas');
+    await initProducts();
+  })
+  .catch((err) => {
+    console.error('Error al conectar a MongoDB Atlas:', err);
+    process.exit(1);
+  });
+
+// Función para inicializar productos desde products.json
+const initProducts = async () => {
+  try {
+    const filePath = path.join(__dirname, 'localprod/products.json');
+    if (!fs.existsSync(filePath)) {
+      console.warn('Archivo products.json no encontrado, omitiendo carga inicial');
+      return;
+    }
+
+    const data = fs.readFileSync(filePath, 'utf-8');
+    const products = JSON.parse(data);
+
+    const existingProducts = await Product.find();
+    if (existingProducts.length === 0) {
+      await Product.insertMany(products);
+      console.log('Productos iniciales cargados en MongoDB.');
+    } else {
+      console.log('Productos ya existentes en MongoDB.');
+    }
+  } catch (error) {
+    console.error('Error al inicializar productos:', error.message);
+  }
+};
+
+// Configuración de Handlebars
 const hbs = create({ extname: '.hbs' });
 app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
 
-
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
-// Almacén temporal de productos
-let products = [];
+// Rutas API
+app.use('/api/products', productsRouter);
+app.use('/api/carts', cartsRouter);
 
-// URL de la API 
-const API_URL = 'https://fakestoreapi.com/products';
-
-// cargar productos desde la API
-const fetchProducts = async () => {
+// Rutas de vistas
+app.get('/home', async (req, res) => {
   try {
-    const response = await axios.get(API_URL);
-    products = response.data;
+    const productsFromDB = await Product.find();
+    res.render('home', { title: 'Página Principal', products: productsFromDB });
   } catch (error) {
-    console.error('Error al cargar productos desde la API:', error);
+    res.status(500).send('Error al obtener productos');
   }
-};
-
-
-app.use(async (req, res, next) => {
-  if (!products.length) {
-    await fetchProducts();
-  }
-  next();
 });
 
-// Rutas 
-app.get('/', (req, res) => {
-  res.render('home', { products });
-});
-
-app.get('/products', (req, res) => {
-  res.render('products', { products });
-});
-
-// cargar productos desde la API directamente
-app.get('/api/products', async (req, res) => {
+app.get('/products', async (req, res) => {
   try {
-    const response = await axios.get(API_URL);
-    products = response.data;
-    res.json(products);
+    const productsFromDB = await Product.find();
+    res.render('products', { title: 'Productos en Tiempo Real', products: productsFromDB });
   } catch (error) {
-    res.status(500).send('Error al obtener productos de la API');
+    res.status(500).send('Error al obtener productos');
   }
 });
 
-// WebSocket
+// Configuración de WebSocket
 io.on('connection', (socket) => {
   console.log('Nuevo cliente conectado');
 
- 
-  socket.emit('updateProducts', products);
+  Product.find()
+    .then((products) => socket.emit('updateProducts', products))
+    .catch((err) => console.error(err));
 
-  // creación de un producto
-  socket.on('addProduct', (product) => {
-    products.push(product);
-    io.emit('updateProducts', products); // Actualizar lista en tiempo real
+  socket.on('addProduct', async (productData) => {
+    try {
+      await Product.create(productData);
+      const updatedProducts = await Product.find();
+      io.emit('updateProducts', updatedProducts);
+    } catch (error) {
+      console.error('Error al agregar producto:', error);
+    }
   });
 
-  // Eliminar un producto
-  socket.on('deleteProduct', (productId) => {
-    products = products.filter((p) => p.id !== productId);
-    io.emit('updateProducts', products); // Actualizar lista en tiempo real
+  socket.on('deleteProduct', async (productId) => {
+    try {
+      await Product.findByIdAndDelete(productId);
+      const updatedProducts = await Product.find();
+      io.emit('updateProducts', updatedProducts);
+    } catch (error) {
+      console.error('Error al eliminar producto:', error);
+    }
   });
 });
 
-
-const PORT = 3000;
+// Iniciar el servidor
 httpServer.listen(PORT, () => {
   console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });
-
