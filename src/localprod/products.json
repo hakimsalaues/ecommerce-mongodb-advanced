@@ -142,6 +142,126 @@
       "category": "hogar",
       "stock": 50,
       "thumbnail": "https://via.placeholder.com/150"
+    },
+    {
+      "title": "Silla Ergonómica",
+      "description": "Silla de oficina con soporte lumbar ajustable",
+      "price": 199.99,
+      "category": "hogar",
+      "stock": 70,
+      "thumbnail": "https://via.placeholder.com/150"
+    },
+    {
+      "title": "Mesa de Comedor",
+      "description": "Mesa de madera para 6 personas",
+      "price": 349.99,
+      "category": "hogar",
+      "stock": 30,
+      "thumbnail": "https://via.placeholder.com/150"
+    },
+    {
+      "title": "Ventilador de Torre",
+      "description": "Ventilador con control remoto y temporizador",
+      "price": 89.99,
+      "category": "hogar",
+      "stock": 100,
+      "thumbnail": "https://via.placeholder.com/150"
+    },
+    {
+      "title": "Monitor 24''",
+      "description": "Monitor LED Full HD para trabajo y juegos",
+      "price": 179.99,
+      "category": "tecnología",
+      "stock": 80,
+      "thumbnail": "https://via.placeholder.com/150"
+    },
+    {
+      "title": "Cámara Web HD",
+      "description": "Cámara web con micrófono integrado para videollamadas",
+      "price": 59.99,
+      "category": "tecnología",
+      "stock": 90,
+      "thumbnail": "https://via.placeholder.com/150"
+    },
+    {
+      "title": "Router WiFi 6",
+      "description": "Router de alta velocidad con tecnología WiFi 6",
+      "price": 129.99,
+      "category": "tecnología",
+      "stock": 50,
+      "thumbnail": "https://via.placeholder.com/150"
+    },
+    {
+      "title": "Mochila Antirrobo",
+      "description": "Mochila con compartimentos ocultos y carga USB",
+      "price": 45.99,
+      "category": "ropa",
+      "stock": 150,
+      "thumbnail": "https://via.placeholder.com/150"
+    },
+    {
+      "title": "Reloj Clásico",
+      "description": "Reloj de pulsera con correa de cuero",
+      "price": 79.99,
+      "category": "ropa",
+      "stock": 60,
+      "thumbnail": "https://via.placeholder.com/150"
+    },
+    {
+      "title": "Botas de Montaña",
+      "description": "Botas impermeables para senderismo y trekking",
+      "price": 129.99,
+      "category": "ropa",
+      "stock": 40,
+      "thumbnail": "https://via.placeholder.com/150"
+    },
+    {
+      "title": "Set de Ollas de Acero",
+      "description": "Juego de 5 ollas con tapa de vidrio templado",
+      "price": 99.99,
+      "category": "hogar",
+      "stock": 70,
+      "thumbnail": "https://via.placeholder.com/150"
+    },
+    {
+      "title": "Cargador Inalámbrico",
+      "description": "Base de carga rápida para dispositivos compatibles",
+      "price": 39.99,
+      "category": "tecnología",
+      "stock": 90,
+      "thumbnail": "https://via.placeholder.com/150"
+    },
+    {
+      "title": "Batidora de Mano",
+      "description": "Batidora eléctrica con diferentes velocidades",
+      "price": 59.99,
+      "category": "hogar",
+      "stock": 80,
+      "thumbnail": "https://via.placeholder.com/150"
+    },
+    {
+      "title": "Audífonos con Cancelación de Ruido",
+      "description": "Auriculares con tecnología de cancelación de ruido",
+      "price": 149.99,
+      "category": "tecnología",
+      "stock": 75,
+      "thumbnail": "https://via.placeholder.com/150"
+    },
+    {
+      "title": "Cafetera Automática",
+      "description": "Cafetera programable con espumador de leche",
+      "price": 199.99,
+      "category": "hogar",
+      "stock": 50,
+      "thumbnail": "https://via.placeholder.com/150"
+    },
+    {
+      "title": "Bicicleta Plegable",
+      "description": "Bicicleta compacta ideal para la ciudad",
+      "price": 299.99,
+      "category": "deportes",
+      "stock": 40,
+      "thumbnail": "https://via.placeholder.com/150"
     }
   ]
   
