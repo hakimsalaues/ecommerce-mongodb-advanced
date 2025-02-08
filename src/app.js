@@ -16,7 +16,7 @@ const io = new Server(httpServer);
 const PORT = 3000;
 
 // Conexión directa a MongoDB Atlas
-const mongoURI = 'mongodb+srv://hakimsalaues78:Qz1bk5Ahpr9VkHCz@cluster0.q18wx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const mongoURI = '';
 
 mongoose
   .connect(mongoURI, {
