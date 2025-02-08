@@ -1,6 +1,6 @@
 const Product = require("../models/product");
 
-// Obtener todos los productos con filtros, paginación y ordenación
+// Obtener todos los productos con filtros paginacion y ordenacion
 const getAllProducts = async (req, res) => {
   try {
     const { page = 1, limit = 10, sort, stock, category } = req.query;

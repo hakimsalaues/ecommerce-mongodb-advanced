@@ -65,14 +65,13 @@
       addProductForm.reset();
     });
 
-    // Función para eliminar un producto vía WebSocket
+    // Función para eliminar un producto via WebSocket
     function deleteProduct(productId) {
       socket.emit('deleteProduct', productId);
     }
 
     // Función para agregar al carrito vía HTTP (ejemplo)
     function addToCart(productId) {
-      // Reemplaza 'ID_DEL_CARRITO' con la lógica real para gestionar carritos
       fetch(`/api/carts/ID_DEL_CARRITO/products/${productId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -16,7 +16,7 @@ const io = new Server(httpServer);
 const PORT = 3000;
 
 // Conexión directa a MongoDB Atlas
-const mongoURI = /* ingresar el url que envie por privado  */
+const mongoURI = 'mongodb+srv://hakimsalaues78:Qz1bk5Ahpr9VkHCz@cluster0.q18wx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
 mongoose
   .connect(mongoURI, {
@@ -56,7 +56,7 @@ const initProducts = async () => {
   }
 };
 
-// Configuración de Handlebars
+//  Handlebars
 const hbs = create({ extname: '.hbs' });
 app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
@@ -90,7 +90,7 @@ app.get('/products', async (req, res) => {
   }
 });
 
-// Configuración de WebSocket
+// Configuracion de WebSocket
 io.on('connection', (socket) => {
   console.log('Nuevo cliente conectado');
 

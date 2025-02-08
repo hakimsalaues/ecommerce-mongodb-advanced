@@ -23,7 +23,7 @@ const addProductToCart = (req, res) => {
     const cart = carts.find(c => c.id === parseInt(cid));
     if (!cart) return res.status(404).json({ error: 'Carrito no encontrado' });
 
-    // Verifica si 'products' está definido antes de usarlo
+    
     if (!global.products) {
         return res.status(500).json({ error: 'No hay productos cargados en memoria' });
     }
