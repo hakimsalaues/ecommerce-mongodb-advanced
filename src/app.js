@@ -8,6 +8,7 @@ const fs = require('fs');
 
 const productsRouter = require('./routes/products.routes');
 const cartsRouter = require('./routes/carts.routes');
+
 const Product = require('./models/product');
 
 const app = express();
@@ -15,7 +16,7 @@ const httpServer = createServer(app);
 const io = new Server(httpServer);
 const PORT = 3000;
 
-// Conexión directa a MongoDB Atlas
+// Conexion a MongoDB Atlas
 const mongoURI = '';
 
 mongoose
@@ -32,7 +33,7 @@ mongoose
     process.exit(1);
   });
 
-// Función para inicializar productos desde products.json
+// Cargar productos desde products.json
 const initProducts = async () => {
   try {
     const filePath = path.join(__dirname, 'localprod/products.json');
@@ -56,7 +57,7 @@ const initProducts = async () => {
   }
 };
 
-//  Handlebars
+// Configuracion de Handlebars
 const hbs = create({ extname: '.hbs' });
 app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
@@ -71,11 +72,17 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
 
+// Manejo de errores en rutas API
+app.use((err, req, res, next) => {
+  console.error('Error en API:', err.message);
+  res.status(500).json({ error: 'Error interno del servidor' });
+});
+
 // Rutas de vistas
 app.get('/home', async (req, res) => {
   try {
     const productsFromDB = await Product.find();
-    res.render('home', { title: 'Página Principal', products: productsFromDB });
+    res.render('home', { title: 'Pagina Principal', products: productsFromDB });
   } catch (error) {
     res.status(500).send('Error al obtener productos');
   }

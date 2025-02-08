@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+
 const {
   getAllProducts,
   getProductById,
@@ -8,7 +9,7 @@ const {
   deleteProduct,
 } = require("../controllers/products");
 
-// Obtener todos los productos con filtros, paginación y ordenación
+// Obtener todos los productos con filtros
 router.get("/", getAllProducts);
 
 // Obtener un producto por ID

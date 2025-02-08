@@ -1,3 +1,5 @@
+const Cart = require('../models/cart');
+const Product = require('../models/product');
 let carts = [];
 let cartId = 1;
 
@@ -18,27 +20,35 @@ const getCartById = (req, res) => {
     res.json(cart.products);
 };
 
-const addProductToCart = (req, res) => {
-    const { cid, pid } = req.params;
-    const cart = carts.find(c => c.id === parseInt(cid));
-    if (!cart) return res.status(404).json({ error: 'Carrito no encontrado' });
+const addProductToCart = async (req, res) => {
+    try {
+        const { cid, pid } = req.params;
 
-    
-    if (!global.products) {
-        return res.status(500).json({ error: 'No hay productos cargados en memoria' });
+        // Verificar si el carrito existe
+        const cart = await Cart.findById(cid);
+        if (!cart) {
+            return res.status(404).json({ error: 'Carrito no encontrado' });
+        }
+
+        // Verificar si el producto existe
+        const product = await Product.findById(pid);
+        if (!product) {
+            return res.status(404).json({ error: 'Producto no encontrado' });
+        }
+
+        // Verificar si el producto ya está en el carrito
+        const existingProduct = cart.products.find(p => p.product.toString() === pid);
+        if (existingProduct) {
+            existingProduct.quantity += 1;
+        } else {
+            cart.products.push({ product: pid, quantity: 1 });
+        }
+
+        await cart.save();
+        res.status(200).json(cart);
+    } catch (error) {
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
-
-    const product = global.products.find(p => p.id === parseInt(pid));
-    if (!product) return res.status(404).json({ error: 'Producto no encontrado' });
-
-    const cartProduct = cart.products.find(p => p.product === parseInt(pid));
-    if (cartProduct) {
-        cartProduct.quantity++;
-    } else {
-        cart.products.push({ product: product.id, quantity: 1 });
-    }
-
-    res.status(201).json(cart);
 };
 
 const deleteProductFromCart = (req, res) => {
